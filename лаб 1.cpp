@@ -11,9 +11,9 @@ struct Element {
 
 class List {
 public:
-    Element* head = nullptr;
+    Element* head;
 
-    List(){}
+    List() : head(nullptr) {}
 
     void add(const string& name, int intValue, double doubleValue) {
         Element* newElement = new Element{name, intValue, doubleValue};
