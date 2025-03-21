@@ -1,160 +1,133 @@
 #include <iostream>
 #include <string>
-
 using namespace std;
 
-struct Node {
-    string name;
-    int amount;
-    double doubleValue;
-    Node* next;
-};
+class MyList {
+private:
+    struct Node {
+        string name;
+        int amount;
+        double doubleValue;
+        Node* next;
+    };
 
-Node* CreateNode(string newName, int n, double p) {
-    Node* newNode = new Node;
-    newNode->name = newName;
-    newNode->amount = n;
-    newNode->doubleValue = p;
-    newNode->next = NULL;
-    return newNode;
-}
+    Node* head;
 
-void AddFirst(Node*& head, string newName, int n, double p) {
-    Node* newNode = CreateNode(newName, n, p);
-    newNode->next = head;
-    head = newNode;
-}
+    Node* CreateNode(string newName, int n, double p) {
+        Node* newNode = new Node;
+        newNode->name = newName;
+        newNode->amount = n;
+        newNode->doubleValue = p;
+        newNode->next = nullptr;
+        return newNode;
+    }
 
-void AddLast(Node*& head, string newName, int n, double p) {
-    Node* newNode = CreateNode(newName, n, p);
-    if (head == NULL) {
+public:
+    MyList() : head(nullptr) {}
+
+    void AddFirst(string newName, int n, double p) {
+        Node* newNode = CreateNode(newName, n, p);
+        newNode->next = head;
         head = newNode;
-        return;
     }
-    Node* tmp = head;
-    while (tmp->next != NULL) {
-        tmp = tmp->next;
-    }
-    tmp->next = newNode;
-}
 
-int AddAfter(Node* head, string newName, int n, double p, string nameAfter) {
-    if (head == NULL) return 1;
-    Node* tmp = head;
-    while (tmp != NULL && tmp->name != nameAfter) {
-        tmp = tmp->next;
+    void AddLast(string newName, int n, double p) {
+        Node* newNode = CreateNode(newName, n, p);
+        if (head == nullptr) {
+            head = newNode;
+            return;
+        }
+        Node* tmp = head;
+        while (tmp->next != nullptr) {
+            tmp = tmp->next;
+        }
+        tmp->next = newNode;
     }
-    if (tmp == NULL) return 1;
-    Node* newNode = CreateNode(newName, n, p);
-    newNode->next = tmp->next;
-    tmp->next = newNode;
-    return 0;
-}
 
-int AddBefore(Node*& head, string newName, int n, double p, string nameBefore) {
-    if (head == NULL) return 1;
-    if (head->name == nameBefore) {
-        AddFirst(head, newName, n, p);
+    int AddAfter(string newName, int n, double p, string nameAfter) {
+        if (head == nullptr) return 1;
+        Node* tmp = head;
+        while (tmp != nullptr && tmp->name != nameAfter) {
+            tmp = tmp->next;
+        }
+        if (tmp == nullptr) return 1;
+        Node* newNode = CreateNode(newName, n, p);
+        newNode->next = tmp->next;
+        tmp->next = newNode;
         return 0;
     }
-    Node* prev = head;
-    Node* tmp = head->next;
-    while (tmp != NULL && tmp->name != nameBefore) {
-        prev = tmp;
-        tmp = tmp->next;
-    }
-    if (tmp == NULL) return 1;
-    Node* newNode = CreateNode(newName, n, p);
-    newNode->next = tmp;
-    prev->next = newNode;
-    return 0;
-}
 
-int DelNode(Node*& head, string delName) {
-    if (head == NULL) return 1;
-    if (head->name == delName) {
-        Node* tmp = head;
-        head = head->next;
+    int AddBefore(string newName, int n, double p, string nameBefore) {
+        if (head == nullptr) return 1;
+        if (head->name == nameBefore) {
+            AddFirst(newName, n, p);
+            return 0;
+        }
+        Node* prev = head;
+        Node* tmp = head->next;
+        while (tmp != nullptr && tmp->name != nameBefore) {
+            prev = tmp;
+            tmp = tmp->next;
+        }
+        if (tmp == nullptr) return 1;
+        Node* newNode = CreateNode(newName, n, p);
+        newNode->next = tmp;
+        prev->next = newNode;
+        return 0;
+    }
+
+    int DelNode(string delName) {
+        if (head == nullptr) return 1;
+        if (head->name == delName) {
+            Node* tmp = head;
+            head = head->next;
+            delete tmp;
+            return 0;
+        }
+        Node* prev = head;
+        Node* tmp = head->next;
+        while (tmp != nullptr && tmp->name != delName) {
+            prev = tmp;
+            tmp = tmp->next;
+        }
+        if (tmp == nullptr) return 1;
+        prev->next = tmp->next;
         delete tmp;
         return 0;
     }
-    Node* prev = head;
-    Node* tmp = head->next;
-    while (tmp != NULL && tmp->name != delName) {
-        prev = tmp;
-        tmp = tmp->next;
-    }
-    if (tmp == NULL) return 1;
-    prev->next = tmp->next;
-    delete tmp;
-    return 0;
-}
 
-void PrintList(Node* head) {
-    if (head == NULL) {
-        cout << "The list is empty" << endl;
-        return;
-    }
-    Node* tmp = head;
-    while (tmp != NULL) {
-        cout << "Product: " << tmp->name << ", Amount: " << tmp->amount << ", Price: " << tmp->doubleValue << endl;
-        tmp = tmp->next;
-    }
-}
-
-int main() {
-    Node* head = NULL;
-    int choice, n;
-    double p;
-    string name, nameAfter, nameBefore;
-
-    while (true) {
-        cout << "1. Add to beginning" << endl;
-        cout << "2. Add to end" << endl;
-        cout << "3. Add after" << endl;
-        cout << "4. Add before" << endl;
-        cout << "5. Delete" << endl;
-        cout << "6. Print list" << endl;
-        cout << "7. Exit" << endl;
-        cout << "Enter your choice: ";
-        cin >> choice;
-
-        switch (choice) {
-        case 1:
-            cout << "Enter name, amount, doubleValue: ";
-            cin >> name >> n >> p;
-            AddFirst(head, name, n, p);
-            break;
-        case 2:
-            cout << "Enter name, amount, doubleValue: ";
-            cin >> name >> n >> p;
-            AddLast(head, name, n, p);
-            break;
-        case 3:
-            cout << "Enter new name, amount, doubleValue, and name to add after: ";
-            cin >> name >> n >> p >> nameAfter;
-            AddAfter(head, name, n, p, nameAfter);
-            break;
-        case 4:
-            cout << "Enter new name, amount, doubleValue, and name to add before: ";
-            cin >> name >> n >> p >> nameBefore;
-            AddBefore(head, name, n, p, nameBefore);
-            break;
-        case 5:
-            cout << "Enter name to delete: ";
-            cin >> name;
-            DelNode(head, name);
-            break;
-        case 6:
-            PrintList(head);
-            break;
-        case 7:
-            return 0;
-        default:
-            cout << "Invalid choice. Try again." << endl;
-            break;
+    void PrintList() {
+        if (head == nullptr) {
+            cout << "The list is empty" << endl;
+            return;
+        }
+        Node* tmp = head;
+        while (tmp != nullptr) {
+            cout << "Name: " << tmp->name << ", Amount: " << tmp->amount << ", DoubleValue: " << tmp->doubleValue << endl;
+            tmp = tmp->next;
         }
     }
+};
+
+int main() {
+    MyList studentList;
+    MyList decanatList;
+
+    studentList.AddFirst("John Doe", 1, 1034.45);
+    studentList.AddLast("Jane Smith", 2, 2134.46);
+    studentList.AddAfter("Bob Johnson", 3, 1504.0, "John Doe");
+    studentList.AddBefore("Alice Williams", 4, 2504.456, "Jane Smith");
+
+    decanatList.AddFirst("Dean Smith", 1, 5023.45);
+    decanatList.AddLast("Assistant Dean Johnson", 1, 2350.45);
+    decanatList.AddAfter("Secretary Lee", 1, 2164.56, "Dean Smith");
+    decanatList.AddBefore("Registrar Wang", 1, 4340.46, "Assistant Dean Johnson");
+
+    cout << "Student List:" << endl;
+    studentList.PrintList();
+
+    cout << "\nDecanat List:" << endl;
+    decanatList.PrintList();
 
     return 0;
 }
