@@ -22,7 +22,7 @@ protected:
 
 class Dog : public Animal {
 public:
-    Dog(string name, string breed) : Animal(name), breed(breed) {}
+    Dog(string name, string color) : Animal(name), breed(breed) {}
 
     void sound() override {
         cout << "Woof!" << endl;
