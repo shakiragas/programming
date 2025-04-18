@@ -1,28 +1,32 @@
 #include <iostream>
-#include <vector>
 using namespace std;
 
-// Класс вектор 
 class vect {
 public:
     int dim;
-    vector<double> b; 
+    double* d;
     static int count;
     int num;
 
     vect(int dim = 0) : dim(dim), num(++count) {
-        b.resize(dim, 0);
-        cout << "Создан вектор " << num << endl;
+        d = new double[dim];
+        for (int i = 0; i < dim; ++i) d[i] = 0; 
+        cout << "Создан вектор" << num << endl;
     }
 
     ~vect() {
-        cout << "Удалён вектор " << num << endl;
+        delete[] d;
+        cout << "Удалён вектор" << num << endl;
     }
 
     vect& operator=(const vect& v) {
         if (this != &v) {
+            delete[] d;
             dim = v.dim;
-            b = v.b;
+            d = new double[dim];
+            for (int i = 0; i < dim; ++i) {
+                d[i] = v.d[i];
+            }
             cout << "v=v" << endl;
         }
         return *this;
@@ -31,7 +35,7 @@ public:
     vect operator+(const vect& v) const {
         vect res(dim);
         for (int i = 0; i < dim; ++i) {
-            res.b[i] = b[i] + v.b[i];
+            res.d[i] = d[i] + v.d[i];
         }
         cout << "v+v" << endl;
         return res;
@@ -40,7 +44,7 @@ public:
     vect operator-(const vect& v) const {
         vect res(dim);
         for (int i = 0; i < dim; ++i) {
-            res.b[i] = b[i] - v.b[i];
+            res.d[i] = d[i] - v.d[i];
         }
         cout << "v-v" << endl;
         return res;
@@ -49,7 +53,7 @@ public:
     vect operator-() const {
         vect res(dim);
         for (int i = 0; i < dim; ++i) {
-            res.b[i] = -b[i];
+            res.d[i] = -d[i];
         }
         cout << "-v" << endl;
         return res;
@@ -58,7 +62,7 @@ public:
     vect operator*(double k) const {
         vect res(dim);
         for (int i = 0; i < dim; ++i) {
-            res.b[i] = b[i] * k;
+            res.d[i] = d[i] * k;
         }
         cout << "k*v" << endl;
         return res;
@@ -67,7 +71,7 @@ public:
     double operator*(const vect& v) const {
         double res = 0;
         for (int i = 0; i < dim; ++i) {
-            res += b[i] * v.b[i];
+            res += d[i] * v.d[i];
         }
         cout << "v*v" << endl;
         return res;
@@ -75,27 +79,32 @@ public:
 };
 int vect::count = 0;
 
-// Класс matr
 class matr {
 public:
     int dim;
-    vector<vector<double>> a;
+    double* a;
     static int count;
     int num;
 
     matr(int dim = 0) : dim(dim), num(++count) {
-        a.resize(dim, vector<double>(dim, 0)); 
-        cout << "Создана матрица " << num << endl;
+        a = new double[dim * dim];
+        for (int i = 0; i < dim * dim; ++i) a[i] = 0; 
+        cout << "Создана матрица" << num << endl;
     }
 
     ~matr() {
-        cout << "Удалена матрица " << num << endl;
+        delete[] a;
+        cout << "Удалена матрица" << num << endl;
     }
 
     matr& operator=(const matr& m) {
         if (this != &m) {
+            delete[] a;
             dim = m.dim;
-            a = m.a;
+            a = new double[dim * dim];
+            for (int i = 0; i < dim * dim; ++i) {
+                a[i] = m.a[i];
+            }
             cout << "m=m" << endl;
         }
         return *this;
@@ -103,10 +112,8 @@ public:
 
     matr operator+(const matr& m) const {
         matr res(dim);
-        for (int i = 0; i < dim; ++i) {
-            for (int j = 0; j < dim; ++j) {
-                res.a[i][j] = a[i][j] + m.a[i][j];
-            }
+        for (int i = 0; i < dim * dim; ++i) {
+            res.a[i] = a[i] + m.a[i];
         }
         cout << "m+m" << endl;
         return res;
@@ -114,10 +121,8 @@ public:
 
     matr operator-(const matr& m) const {
         matr res(dim);
-        for (int i = 0; i < dim; ++i) {
-            for (int j = 0; j < dim; ++j) {
-                res.a[i][j] = a[i][j] - m.a[i][j];
-            }
+        for (int i = 0; i < dim * dim; ++i) {
+            res.a[i] = a[i] - m.a[i];
         }
         cout << "m-m" << endl;
         return res;
@@ -125,10 +130,8 @@ public:
 
     matr operator-() const {
         matr res(dim);
-        for (int i = 0; i < dim; ++i) {
-            for (int j = 0; j < dim; ++j) {
-                res.a[i][j] = -a[i][j];
-            }
+        for (int i = 0; i < dim * dim; ++i) {
+            res.a[i] = -a[i];
         }
         cout << "-m" << endl;
         return res;
@@ -136,10 +139,8 @@ public:
 
     matr operator*(double k) const {
         matr res(dim);
-        for (int i = 0; i < dim; ++i) {
-            for (int j = 0; j < dim; ++j) {
-                res.a[i][j] = a[i][j] * k;
-            }
+        for (int i = 0; i < dim * dim; ++i) {
+            res.a[i] = a[i] * k;
         }
         cout << "k*m" << endl;
         return res;
@@ -149,9 +150,9 @@ public:
         matr res(dim);
         for (int i = 0; i < dim; ++i) {
             for (int j = 0; j < dim; ++j) {
-                res.a[i][j] = 0;
+                res.a[i * dim + j] = 0;
                 for (int k = 0; k < dim; ++k) {
-                    res.a[i][j] += a[i][k] * m.a[k][j];
+                    res.a[i * dim + j] += a[i * dim + k] * m.a[k * dim + j];
                 }
             }
         }
@@ -162,9 +163,9 @@ public:
     vect operator*(const vect& v) const {
         vect res(dim);
         for (int i = 0; i < dim; ++i) {
-            res.b[i] = 0;
+            res.d[i] = 0;
             for (int j = 0; j < dim; ++j) {
-                res.b[i] += a[i][j] * v.b[j];
+                res.d[i] += a[i * dim + j] * v.d[j];
             }
         }
         cout << "m*v" << endl;
@@ -172,7 +173,6 @@ public:
     }
 };
 int matr::count = 0;
-
 
 int main() {
     vect v1(3), v2(3); 
