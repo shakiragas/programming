@@ -4,28 +4,28 @@ using namespace std;
 class vect {
 public:
     int dim;
-    double* d;
+    double* b; 
     static int count;
     int num;
 
     vect(int dim = 0) : dim(dim), num(++count) {
-        d = new double[dim];
-        for (int i = 0; i < dim; ++i) d[i] = 0; 
+        b = new double[dim]; 
+        for (int i = 0; i < dim; ++i) b[i] = 0; 
         cout << "Создан вектор" << num << endl;
     }
 
     ~vect() {
-        delete[] d;
+        delete[] b; 
         cout << "Удалён вектор" << num << endl;
     }
 
     vect& operator=(const vect& v) {
         if (this != &v) {
-            delete[] d;
+            delete[] b; 
             dim = v.dim;
-            d = new double[dim];
+            b = new double[dim]; 
             for (int i = 0; i < dim; ++i) {
-                d[i] = v.d[i];
+                b[i] = v.b[i];
             }
             cout << "v=v" << endl;
         }
@@ -35,7 +35,7 @@ public:
     vect operator+(const vect& v) const {
         vect res(dim);
         for (int i = 0; i < dim; ++i) {
-            res.d[i] = d[i] + v.d[i];
+            res.b[i] = b[i] + v.b[i];
         }
         cout << "v+v" << endl;
         return res;
@@ -44,7 +44,7 @@ public:
     vect operator-(const vect& v) const {
         vect res(dim);
         for (int i = 0; i < dim; ++i) {
-            res.d[i] = d[i] - v.d[i];
+            res.b[i] = b[i] - v.b[i];
         }
         cout << "v-v" << endl;
         return res;
@@ -53,7 +53,7 @@ public:
     vect operator-() const {
         vect res(dim);
         for (int i = 0; i < dim; ++i) {
-            res.d[i] = -d[i];
+            res.b[i] = -b[i];
         }
         cout << "-v" << endl;
         return res;
@@ -62,7 +62,7 @@ public:
     vect operator*(double k) const {
         vect res(dim);
         for (int i = 0; i < dim; ++i) {
-            res.d[i] = d[i] * k;
+            res.b[i] = b[i] * k;
         }
         cout << "k*v" << endl;
         return res;
@@ -71,7 +71,7 @@ public:
     double operator*(const vect& v) const {
         double res = 0;
         for (int i = 0; i < dim; ++i) {
-            res += d[i] * v.d[i];
+            res += b[i] * v.b[i];
         }
         cout << "v*v" << endl;
         return res;
@@ -82,28 +82,43 @@ int vect::count = 0;
 class matr {
 public:
     int dim;
-    double* a;
+    double** a; 
     static int count;
     int num;
 
     matr(int dim = 0) : dim(dim), num(++count) {
-        a = new double[dim * dim];
-        for (int i = 0; i < dim * dim; ++i) a[i] = 0; 
-        cout << "Создана матрица" << num << endl;
+        a = new double*[dim];
+        for (int i = 0; i < dim; ++i) {
+            a[i] = new double[dim]; 
+            for (int j = 0; j < dim; ++j) {
+                a[i][j] = 0; 
+            }
+        }
+        cout << "Создана матрица " << num << endl;
     }
 
     ~matr() {
-        delete[] a;
-        cout << "Удалена матрица" << num << endl;
+        for (int i = 0; i < dim; ++i) {
+            delete[] a[i]; 
+        }
+        delete[] a; 
+        cout << "Удалена матрица " << num << endl;
     }
 
     matr& operator=(const matr& m) {
         if (this != &m) {
-            delete[] a;
+            for (int i = 0; i < dim; ++i) {
+                delete[] a[i]; 
+            }
+            delete[] a; 
+
             dim = m.dim;
-            a = new double[dim * dim];
-            for (int i = 0; i < dim * dim; ++i) {
-                a[i] = m.a[i];
+            a = new double*[dim]; 
+            for (int i = 0; i < dim; ++i) {
+                a[i] = new double[dim]; 
+                for (int j = 0; j < dim; ++j) {
+                    a[i][j] = m.a[i][j];
+                }
             }
             cout << "m=m" << endl;
         }
@@ -112,8 +127,10 @@ public:
 
     matr operator+(const matr& m) const {
         matr res(dim);
-        for (int i = 0; i < dim * dim; ++i) {
-            res.a[i] = a[i] + m.a[i];
+        for (int i = 0; i < dim; ++i) {
+            for (int j = 0; j < dim; ++j) {
+                res.a[i][j] = a[i][j] + m.a[i][j];
+            }
         }
         cout << "m+m" << endl;
         return res;
@@ -121,8 +138,10 @@ public:
 
     matr operator-(const matr& m) const {
         matr res(dim);
-        for (int i = 0; i < dim * dim; ++i) {
-            res.a[i] = a[i] - m.a[i];
+        for (int i = 0; i < dim; ++i) {
+            for (int j = 0; j < dim; ++j) {
+                res.a[i][j] = a[i][j] - m.a[i][j];
+            }
         }
         cout << "m-m" << endl;
         return res;
@@ -130,8 +149,10 @@ public:
 
     matr operator-() const {
         matr res(dim);
-        for (int i = 0; i < dim * dim; ++i) {
-            res.a[i] = -a[i];
+        for (int i = 0; i < dim; ++i) {
+            for (int j = 0; j < dim; ++j) {
+                res.a[i][j] = -a[i][j];
+            }
         }
         cout << "-m" << endl;
         return res;
@@ -139,8 +160,10 @@ public:
 
     matr operator*(double k) const {
         matr res(dim);
-        for (int i = 0; i < dim * dim; ++i) {
-            res.a[i] = a[i] * k;
+        for (int i = 0; i < dim; ++i) {
+            for (int j = 0; j < dim; ++j) {
+                res.a[i][j] = a[i][j] * k;
+            }
         }
         cout << "k*m" << endl;
         return res;
@@ -150,9 +173,9 @@ public:
         matr res(dim);
         for (int i = 0; i < dim; ++i) {
             for (int j = 0; j < dim; ++j) {
-                res.a[i * dim + j] = 0;
+                res.a[i][j] = 0;
                 for (int k = 0; k < dim; ++k) {
-                    res.a[i * dim + j] += a[i * dim + k] * m.a[k * dim + j];
+                    res.a[i][j] += a[i][k] * m.a[k][j];
                 }
             }
         }
@@ -163,9 +186,9 @@ public:
     vect operator*(const vect& v) const {
         vect res(dim);
         for (int i = 0; i < dim; ++i) {
-            res.d[i] = 0;
+            res.b[i] = 0;
             for (int j = 0; j < dim; ++j) {
-                res.d[i] += a[i * dim + j] * v.d[j];
+                res.b[i] += a[i][j] * v.b[j];
             }
         }
         cout << "m*v" << endl;
