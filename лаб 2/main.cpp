@@ -178,23 +178,20 @@ int matr::count = 0;
 
 
 int main() {
-    vect v1(3), v2(3);
-    matr m1(3), m2(3);
+    vect v1(3), v2(3); 
+    matr m1(3), m2(3); 
 
-    vect v3 = v1 + v2;
-    vect v4 = v1 - v2;
-    vect v5 = -v1;
-    double dot = v1 * v2;
-    vect v6 = v1 * 2.0;
-    v1 = v2;
+    vect v3 = v1 + v2; 
+    vect v4 = v1 - v2; 
+    vect v5 = -v1;     
+    double dot = v1 * v2; 
 
-    matr m3 = m1 + m2;
+    matr m3 = m1 + m2; 
     matr m4 = m1 - m2;
-    matr m5 = -m1;
-    matr m6 = m1 * 2.0;
-    m1 = m2;
-    matr m7 = m1 * m2;
-    vect v7 = m1 * v1;
+    matr m5 = -m1;     
+    matr m7 = m1 * m2; 
+    m1 = m2;           
+    vect v7 = m1 * v1; 
 
     return 0;
 }
