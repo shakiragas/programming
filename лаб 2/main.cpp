@@ -1,33 +1,28 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
-// Класс вектора
+// Класс вектор 
 class vect {
 public:
     int dim;
-    double* b;
+    vector<double> b; 
     static int count;
     int num;
 
     vect(int dim = 0) : dim(dim), num(++count) {
-        b = new double[dim];
-        for (int i = 0; i < dim; ++i) b[i] = 0; 
-        cout << "Создан vect " << num << endl;
+        b.resize(dim, 0);
+        cout << "Создан вектор " << num << endl;
     }
 
     ~vect() {
-        delete[] b;
-        cout << "Удалён vect " << num << endl;
+        cout << "Удалён вектор " << num << endl;
     }
 
     vect& operator=(const vect& v) {
         if (this != &v) {
-            delete[] b;
             dim = v.dim;
-            b = new double[dim];
-            for (int i = 0; i < dim; ++i) {
-                b[i] = v.b[i];
-            }
+            b = v.b;
             cout << "v=v" << endl;
         }
         return *this;
@@ -80,33 +75,27 @@ public:
 };
 int vect::count = 0;
 
-// Класс матрицы
+// Класс matr
 class matr {
 public:
     int dim;
-    double* a;
+    vector<vector<double>> a;
     static int count;
     int num;
 
     matr(int dim = 0) : dim(dim), num(++count) {
-        a = new double[dim * dim];
-        for (int i = 0; i < dim * dim; ++i) a[i] = 0; 
-        cout << "Создана matr " << num << endl;
+        a.resize(dim, vector<double>(dim, 0)); 
+        cout << "Создана матрица " << num << endl;
     }
 
     ~matr() {
-        delete[] a;
-        cout << "Удалена matr " << num << endl;
+        cout << "Удалена матрица " << num << endl;
     }
 
     matr& operator=(const matr& m) {
         if (this != &m) {
-            delete[] a;
             dim = m.dim;
-            a = new double[dim * dim];
-            for (int i = 0; i < dim * dim; ++i) {
-                a[i] = m.a[i];
-            }
+            a = m.a;
             cout << "m=m" << endl;
         }
         return *this;
@@ -114,8 +103,10 @@ public:
 
     matr operator+(const matr& m) const {
         matr res(dim);
-        for (int i = 0; i < dim * dim; ++i) {
-            res.a[i] = a[i] + m.a[i];
+        for (int i = 0; i < dim; ++i) {
+            for (int j = 0; j < dim; ++j) {
+                res.a[i][j] = a[i][j] + m.a[i][j];
+            }
         }
         cout << "m+m" << endl;
         return res;
@@ -123,8 +114,10 @@ public:
 
     matr operator-(const matr& m) const {
         matr res(dim);
-        for (int i = 0; i < dim * dim; ++i) {
-            res.a[i] = a[i] - m.a[i];
+        for (int i = 0; i < dim; ++i) {
+            for (int j = 0; j < dim; ++j) {
+                res.a[i][j] = a[i][j] - m.a[i][j];
+            }
         }
         cout << "m-m" << endl;
         return res;
@@ -132,8 +125,10 @@ public:
 
     matr operator-() const {
         matr res(dim);
-        for (int i = 0; i < dim * dim; ++i) {
-            res.a[i] = -a[i];
+        for (int i = 0; i < dim; ++i) {
+            for (int j = 0; j < dim; ++j) {
+                res.a[i][j] = -a[i][j];
+            }
         }
         cout << "-m" << endl;
         return res;
@@ -141,8 +136,10 @@ public:
 
     matr operator*(double k) const {
         matr res(dim);
-        for (int i = 0; i < dim * dim; ++i) {
-            res.a[i] = a[i] * k;
+        for (int i = 0; i < dim; ++i) {
+            for (int j = 0; j < dim; ++j) {
+                res.a[i][j] = a[i][j] * k;
+            }
         }
         cout << "k*m" << endl;
         return res;
@@ -152,9 +149,9 @@ public:
         matr res(dim);
         for (int i = 0; i < dim; ++i) {
             for (int j = 0; j < dim; ++j) {
-                res.a[i * dim + j] = 0;
+                res.a[i][j] = 0;
                 for (int k = 0; k < dim; ++k) {
-                    res.a[i * dim + j] += a[i * dim + k] * m.a[k * dim + j];
+                    res.a[i][j] += a[i][k] * m.a[k][j];
                 }
             }
         }
@@ -167,7 +164,7 @@ public:
         for (int i = 0; i < dim; ++i) {
             res.b[i] = 0;
             for (int j = 0; j < dim; ++j) {
-                res.b[i] += a[i * dim + j] * v.b[j];
+                res.b[i] += a[i][j] * v.b[j];
             }
         }
         cout << "m*v" << endl;
